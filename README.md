@@ -1,12 +1,11 @@
-# EnMonCo Backend template project
+# EnMonCo Meters API
 
 ## Description
 
-NestJS REST API boilerplate for typical project
+NestJS REST API server for EnMonCo meters
 
 ## Table of Contents
 
-- [Features](#features)
 - [Quick run](#quick-run)
 - [Comfortable development](#comfortable-development)
 - [Links](#links)
@@ -14,27 +13,11 @@ NestJS REST API boilerplate for typical project
 - [Database utils](#database-utils)
 - [Tests](#tests)
 
-## Features
-
-- [x] Database ([typeorm](https://www.npmjs.com/package/typeorm)).
-- [x] Seeding ([typeorm-seeding](https://www.npmjs.com/package/typeorm-seeding)).
-- [x] Config Service ([@nestjs/config](https://www.npmjs.com/package/@nestjs/config)).
-- [x] Mailing ([nodemailer](https://www.npmjs.com/package/nodemailer), [@nestjs-modules/mailer](https://www.npmjs.com/package/@nestjs-modules/mailer)).
-- [x] Sign in and sign up via email.
-- [x] Social sign in (Apple, Facebook, Google, Twitter).
-- [x] Admin and User roles.
-- [x] I18N ([nestjs-i18n](https://www.npmjs.com/package/nestjs-i18n)).
-- [x] File uploads. Support local and Amazon S3 drivers.
-- [x] Swagger.
-- [x] E2E and units tests.
-- [x] Docker.
-- [x] CI (Github Actions).
-
 ## Quick run
 
 ```bash
-git clone --depth 1 https://github.com/EnMonCo/emc-backend-template.git my-app
-cd my-app/
+git clone https://github.com/EnMonCo/emc-meters.git
+cd emc-meters/
 cp env-example .env
 docker-compose up -d
 ```
@@ -48,8 +31,8 @@ docker-compose logs
 ## Comfortable development
 
 ```bash
-git clone --depth 1 https://github.com/EnMonCo/emc-backend-template.git my-app
-cd my-app/
+git clone https://github.com/EnMonCo/emc-meters.git
+cd emc-meters/
 cp env-example .env
 ```
 
@@ -75,7 +58,7 @@ npm run start:dev
 
 ## Links
 
-- Swagger: http://localhost:8000/docs
+- Swagger: http://localhost:8001/docs
 - Maildev: http://localhost:1080
 
 ## Automatic update of dependencies
@@ -128,10 +111,4 @@ npm run test:e2e
 
 ```bash
 docker-compose -f docker-compose.ci.yaml --env-file env-example -p ci up --build --exit-code-from api && docker-compose -p ci rm -svf
-```
-
-## Test benchmarking
-
-```bash
-docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
 ```
