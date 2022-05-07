@@ -1,21 +1,31 @@
 import { EntityHelper } from '../../utils/entity-helper';
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
+  Entity,
   Index,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Status } from '../../statuses/entities/status.entity';
+import * as bcrypt from 'bcryptjs';
 
+@Entity()
 export class Meter extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   password: string;
+
+  @BeforeInsert()
+  async setPassword() {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+  }
 
   @Index()
   @Column({ nullable: true })

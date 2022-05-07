@@ -3,6 +3,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { MetersService } from './meters.service';
 import { CreateMeterDto } from './dto/create-meter.dto';
 import { UpdateMeterDto } from './dto/update-meter.dto';
+import { infinityPagination } from '../utils/infinity-pagination';
 
 @Controller()
 export class MetersController {
@@ -14,13 +15,23 @@ export class MetersController {
   }
 
   @MessagePattern('findAllMeters')
-  findAll() {
-    return this.metersService.findAll();
+  async findAll(userId: number, page: number, limit: number) {
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return infinityPagination(
+      await this.metersService.findManyWithPagination(userId, {
+        page,
+        limit,
+      }),
+      { page, limit },
+    );
   }
 
   @MessagePattern('findOneMeter')
-  findOne(@Payload() id: number) {
-    return this.metersService.findOne(id);
+  findOne(@Payload() id: string) {
+    return this.metersService.findOne({ id });
   }
 
   @MessagePattern('updateMeter')
@@ -29,7 +40,7 @@ export class MetersController {
   }
 
   @MessagePattern('removeMeter')
-  remove(@Payload() id: number) {
-    return this.metersService.remove(id);
+  remove(@Payload() id: string) {
+    return this.metersService.softDelete(id);
   }
 }

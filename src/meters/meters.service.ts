@@ -5,6 +5,7 @@ import { Meter } from './entities/meter.entity';
 import { Repository } from 'typeorm';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { EntityCondition } from '../utils/types/entity-condition.type';
+import { CreateMeterDto } from './dto/create-meter.dto';
 
 @Injectable()
 export class MetersService {
@@ -13,7 +14,7 @@ export class MetersService {
     private metersRepository: Repository<Meter>,
   ) {}
 
-  create(createMeterDto) {
+  create(createMeterDto: CreateMeterDto) {
     return this.metersRepository.save(
       this.metersRepository.create(createMeterDto),
     );
