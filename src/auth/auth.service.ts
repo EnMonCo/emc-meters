@@ -1,59 +1,37 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { AuthUpdateDto } from './dto/auth-update.dto';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { AuthLoginDto } from './dto/auth-login.dto';
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import * as crypto from 'crypto';
-import { plainToClass } from 'class-transformer';
+import { randomUUID } from 'crypto';
 import { Status } from 'src/statuses/entities/status.entity';
-import { AuthProvidersEnum } from './auth-providers.enum';
-import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { UsersService } from 'src/users/users.service';
-import { MailService } from 'src/mail/mail.service';
+import { AuthRegisterDto } from './dto/auth-register.dto';
+import { MetersService } from 'src/meters/meters.service';
+import { Meter } from '../meters/entities/meter.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private usersService: UsersService,
-    private mailService: MailService,
+    private metersService: MetersService,
+    private configService: ConfigService,
   ) {}
 
+  private readonly logger = new Logger(AuthService.name);
+
   async validateLogin(
-    loginDto: AuthEmailLoginDto,
-    onlyAdmin: boolean,
-  ): Promise<{ token: string; user: User }> {
-    const user = await this.usersService.findOne({
-      email: loginDto.email,
-    });
+    loginDto: AuthLoginDto,
+  ): Promise<{ token: string; meter: Meter }> {
+    const meter = await this.metersService.findOne({ id: loginDto.id });
 
-    if (
-      !user ||
-      (user &&
-        !(onlyAdmin ? [RoleEnum.admin] : [RoleEnum.user]).includes(
-          user.role.id,
-        ))
-    ) {
+    if (!meter) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'notFound',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
+            id: 'notFound',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -62,7 +40,7 @@ export class AuthService {
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      meter.password,
     );
 
     if (!isValidPassword) {
@@ -78,83 +56,43 @@ export class AuthService {
     }
 
     const token = this.jwtService.sign({
-      id: user.id,
-      role: user.role,
+      id: meter.id,
+      userId: meter.userId,
     });
 
-    return { token, user: user };
+    return { token, meter: meter };
   }
 
-  async register(dto: AuthRegisterLoginDto): Promise<void> {
+  async register(
+    dto: AuthRegisterDto,
+  ): Promise<{ pairUrl: string; meter: Meter }> {
+    const id = randomUUID();
     const hash = crypto
       .createHash('sha256')
-      .update(randomStringGenerator())
+      .update(`${id}#${dto.serialNumber}`)
       .digest('hex');
 
-    const user = await this.usersService.create({
+    this.logger.log(`Registering meter with id: ${id}`);
+
+    const meter = await this.metersService.create({
+      id,
       ...dto,
-      email: dto.email,
-      role: {
-        id: RoleEnum.user,
-      } as Role,
       status: {
-        id: StatusEnum.inactive,
+        id: StatusEnum.waiting_for_pairing,
       } as Status,
       hash,
     });
 
-    await this.mailService.userSignUp({
-      to: user.email,
-      data: {
-        hash,
-      },
-    });
+    const pairUrl = `${this.configService.get('app.frontendDomain')}/pair/${
+      meter.hash
+    }`;
+
+    return { pairUrl, meter: meter };
   }
 
-  async update(user: User, userDto: AuthUpdateDto): Promise<User> {
-    if (userDto.password) {
-      if (userDto.oldPassword) {
-        const currentUser = await this.usersService.findOne({
-          id: user.id,
-        });
-
-        const isValidOldPassword = await bcrypt.compare(
-          userDto.oldPassword,
-          currentUser.password,
-        );
-
-        if (!isValidOldPassword) {
-          throw new HttpException(
-            {
-              status: HttpStatus.UNPROCESSABLE_ENTITY,
-              errors: {
-                oldPassword: 'incorrectOldPassword',
-              },
-            },
-            HttpStatus.UNPROCESSABLE_ENTITY,
-          );
-        }
-      } else {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              oldPassword: 'missingOldPassword',
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-    }
-
-    await this.usersService.update(user.id, userDto);
-
-    return this.usersService.findOne({
-      id: user.id,
+  async me(meter: Meter): Promise<Meter> {
+    return this.metersService.findOne({
+      id: meter.id,
     });
-  }
-
-  async softDelete(user: User): Promise<void> {
-    await this.usersService.softDelete(user.id);
   }
 }

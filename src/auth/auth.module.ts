@@ -6,16 +6,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnonymousStrategy } from './strategies/anonymous.strategy';
-import { UsersModule } from 'src/users/users.module';
-import { ForgotModule } from 'src/forgot/forgot.module';
-import { MailModule } from 'src/mail/mail.module';
+import { MetersModule } from '../meters/meters.module';
 
 @Module({
   imports: [
-    UsersModule,
-    ForgotModule,
+    MetersModule,
     PassportModule,
-    MailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
