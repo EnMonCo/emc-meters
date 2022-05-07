@@ -1,26 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMeterDto } from './dto/create-meter.dto';
 import { UpdateMeterDto } from './dto/update-meter.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Meter } from './entities/meter.entity';
+import { Repository } from 'typeorm';
+import { IPaginationOptions } from '../utils/types/pagination-options';
+import { EntityCondition } from '../utils/types/entity-condition.type';
 
 @Injectable()
 export class MetersService {
-  create(createMeterDto: CreateMeterDto) {
-    return 'This action adds a new meter';
+  constructor(
+    @InjectRepository(Meter)
+    private metersRepository: Repository<Meter>,
+  ) {}
+
+  create(createMeterDto) {
+    return this.metersRepository.save(
+      this.metersRepository.create(createMeterDto),
+    );
   }
 
-  findAll() {
-    return `This action returns all meters`;
+  findManyWithPagination(
+    userId: number,
+    paginationOptions: IPaginationOptions,
+  ) {
+    return this.metersRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: {
+        userId,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} meter`;
+  findOne(fields: EntityCondition<Meter>) {
+    return this.metersRepository.findOne({
+      where: fields,
+    });
   }
 
-  update(id: number, updateMeterDto: UpdateMeterDto) {
-    return `This action updates a #${id} meter`;
+  update(id: string, updateMeterDto: UpdateMeterDto) {
+    return this.metersRepository.save(
+      this.metersRepository.create({
+        id,
+        ...updateMeterDto,
+      }),
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} meter`;
+  async softDelete(id: string): Promise<void> {
+    await this.metersRepository.softDelete(id);
   }
 }
