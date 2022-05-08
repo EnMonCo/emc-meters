@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { SerializerInterceptor } from './utils/serializer.interceptor';
 import validationOptions from './utils/validation-options';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -20,9 +21,14 @@ async function bootstrap() {
   app.useGlobalInterceptors(new SerializerInterceptor());
   app.useGlobalPipes(new ValidationPipe(validationOptions));
 
+  app.connectMicroservice({
+    transport: Transport.TCP,
+  });
+
+  // Swagger
   const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
+    .setTitle('Meters API')
+    .setDescription('API docs for emc-meters')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -32,4 +38,5 @@ async function bootstrap() {
 
   await app.listen(configService.get('app.port'));
 }
+
 void bootstrap();
