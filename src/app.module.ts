@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { HomeModule } from './home/home.module';
 import { MetersModule } from './meters/meters.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MetersModule } from './meters/meters.module';
     AuthModule,
     HomeModule,
     MetersModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

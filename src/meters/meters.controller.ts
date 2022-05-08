@@ -5,14 +5,15 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Inject,
   Param,
   Patch,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { MetersService } from './meters.service';
 import { UpdateMeterDto } from './dto/update-meter.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ClientProxy } from '@nestjs/microservices';
+import { AuthUserGuard } from '../users/auth-user.guard';
 
 // TODO: make http controller
 @ApiBearerAuth()
@@ -23,10 +24,7 @@ import { ClientProxy } from '@nestjs/microservices';
   version: '1',
 })
 export class MetersController {
-  constructor(
-    private readonly metersService: MetersService,
-    @Inject('EMC_ACCOUNTS') private readonly emcAccounts: ClientProxy,
-  ) {}
+  constructor(private readonly metersService: MetersService) {}
 
   // @Get()
   // @HttpCode(HttpStatus.OK)
@@ -48,11 +46,11 @@ export class MetersController {
   //   );
   // }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.metersService.findOne({ id });
-  }
+  // @Get(':id')
+  // @HttpCode(HttpStatus.OK)
+  // findOne(@Param('id') id: string) {
+  //   return this.metersService.findOne({ id });
+  // }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
@@ -65,11 +63,9 @@ export class MetersController {
     return this.metersService.softDelete(id);
   }
 
-  // @Get('test')
-  // test() {
-  //   return this.emcAccounts.send(
-  //     { cmd: 'auth.verifyUser' },
-  //     { jwtToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6eyJpZCI6MiwibmFtZSI6IlVzZXIiLCJfX2VudGl0eSI6IlJvbGUifSwiaWF0IjoxNjUyMDMyMzUzLCJleHAiOjE2NTIxMTg3NTN9.1HaArnmYv7daZU2gVLOcDZKHRXq2JjpAw8cAs7AHz8Y' },
-  //   );
-  // }
+  @Get('test')
+  @UseGuards(AuthUserGuard)
+  test(@Request() req) {
+    return req.user;
+  }
 }
