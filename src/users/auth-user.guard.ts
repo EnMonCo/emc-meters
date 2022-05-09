@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 
@@ -12,6 +13,9 @@ export class AuthUserGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    if (!request.headers.authorization) {
+      throw new UnauthorizedException('user:auth:no-token');
+    }
     const jwt = request.headers.authorization.split('Bearer ')[1];
     if (!jwt) {
       return false;

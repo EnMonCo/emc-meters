@@ -11,11 +11,11 @@ export class UpdateMeterDto extends PartialType(CreateMeterDto) {
   @Validate(IsNotExistOnConstraint, ['Meter', 'userId'], {
     message: 'nameAlreadyExists',
   })
-  name: string;
+  name?: string;
 
   @ApiProperty({ example: 10 })
   @IsOptional()
-  userId: number;
+  userId?: number;
 
   @ApiProperty({ type: Status })
   @IsOptional()

@@ -20,16 +20,10 @@ export class MetersService {
     );
   }
 
-  findManyWithPagination(
-    userId: number,
-    paginationOptions: IPaginationOptions,
-  ) {
+  findManyWithPagination(paginationOptions: IPaginationOptions) {
     return this.metersRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
-      where: {
-        userId,
-      },
     });
   }
 

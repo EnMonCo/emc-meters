@@ -1,24 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Patch,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MetersService } from './meters.service';
-import { UpdateMeterDto } from './dto/update-meter.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthUserGuard } from '../users/auth-user.guard';
 
-// TODO: make http controller
+// TODO: what should be purpose for this controller?
 @ApiBearerAuth()
-@ApiTags('Users')
-// TODO: check user guard
+@ApiTags('Meters')
 @Controller({
   path: 'meters',
   version: '1',
@@ -52,20 +38,14 @@ export class MetersController {
   //   return this.metersService.findOne({ id });
   // }
 
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateMeterDto: UpdateMeterDto) {
-    return this.metersService.update(updateMeterDto.id, updateMeterDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.metersService.softDelete(id);
-  }
-
-  @Get('test')
-  @UseGuards(AuthUserGuard)
-  test(@Request() req) {
-    return req.user;
-  }
+  // @Patch(':id')
+  // @HttpCode(HttpStatus.OK)
+  // update(@Param('id') id: string, @Body() updateMeterDto: UpdateMeterDto) {
+  //   return this.metersService.update(updateMeterDto.id, updateMeterDto);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.metersService.softDelete(id);
+  // }
 }

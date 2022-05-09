@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { HomeModule } from './home/home.module';
 import { MetersModule } from './meters/meters.module';
 import { UsersModule } from './users/users.module';
+import { UserMetersModule } from './user-meters/user-meters.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     HomeModule,
     MetersModule,
     UsersModule,
+    UserMetersModule,
   ],
 })
 export class AppModule {}
