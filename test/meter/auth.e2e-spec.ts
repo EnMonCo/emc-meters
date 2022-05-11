@@ -5,7 +5,7 @@ import {
   TEST_METER_PASSWORD,
 } from '../utils/constants';
 
-describe('Auth user (e2e)', () => {
+describe('Auth meter (e2e)', () => {
   const app = APP_URL;
 
   it('Login: /api/v1/auth/ (POST)', () => {
