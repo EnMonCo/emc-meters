@@ -5,7 +5,7 @@ import { IsExist } from 'src/utils/validators/is-exists.validator';
 export class AuthLoginDto {
   @ApiProperty({ example: '277b3eeb-d010-4839-b2f4-0370e6a4f276' })
   @Validate(IsExist, ['Meter'], {
-    message: 'meterNotExists',
+    message: 'meter:notExists',
   })
   id: string;
 

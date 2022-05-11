@@ -7,11 +7,13 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Status } from '../../statuses/entities/status.entity';
 import * as bcrypt from 'bcryptjs';
+import { ShortTermData } from '../../data/entities/short-term-data.entity';
 
 @Entity()
 export class Meter extends EntityHelper {
@@ -46,6 +48,9 @@ export class Meter extends EntityHelper {
     eager: true,
   })
   status?: Status;
+
+  @OneToMany(() => ShortTermData, (data) => data.meter)
+  shortTermData: ShortTermData[];
 
   @CreateDateColumn()
   createdAt: Date;

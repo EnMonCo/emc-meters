@@ -39,7 +39,7 @@ export class UserMetersController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'userId', type: 'number', required: true })
   async findAll(
-    @Param('userId') userId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ) {
@@ -57,30 +57,43 @@ export class UserMetersController {
   }
 
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
-  findOne(@Param('id') id: string, @Param('userId') userId: number) {
+  findOne(
+    @Param('id') id: string,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     return this.metersService.findOne({ id, userId });
   }
 
   @Patch(':id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
   update(
     @Param('id') id: string,
-    @Param('userId') userId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Body() updateUserMeterDto: UpdateUserMeterDto,
   ) {
     return this.metersService.update(id, updateUserMeterDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  remove(@Param('id') id: string, @Param('userId') userId: number) {
+  remove(
+    @Param('id') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     return this.metersService.softDelete(id);
   }
 
   @Post(':hash/pair')
-  pair(@Param('hash') hash: string, @Param('userId') userId: number) {
+  @HttpCode(HttpStatus.OK)
+  pair(
+    @Param('hash') hash: string,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     return this.userMetersService.pair(hash, userId);
   }
 }

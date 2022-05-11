@@ -10,6 +10,7 @@ import { HomeModule } from './home/home.module';
 import { MetersModule } from './meters/meters.module';
 import { UsersModule } from './users/users.module';
 import { UserMetersModule } from './user-meters/user-meters.module';
+import { DataModule } from './data/data.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UserMetersModule } from './user-meters/user-meters.module';
     MetersModule,
     UsersModule,
     UserMetersModule,
+    DataModule,
   ],
 })
 export class AppModule {}

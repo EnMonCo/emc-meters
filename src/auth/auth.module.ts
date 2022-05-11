@@ -11,7 +11,10 @@ import { MetersModule } from '../meters/meters.module';
 @Module({
   imports: [
     MetersModule,
-    PassportModule,
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+      property: 'meter',
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
