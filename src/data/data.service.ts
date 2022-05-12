@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateShortTermDataDto } from './dto/create-short-term-data.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Meter } from '../meters/entities/meter.entity';
 import { Between, Repository } from 'typeorm';
 import { ShortTermData } from './entities/short-term-data.entity';
 
 @Injectable()
 export class DataService {
   constructor(
-    @InjectRepository(Meter)
+    @InjectRepository(ShortTermData)
     private shortTermDataRepository: Repository<ShortTermData>,
   ) {}
 

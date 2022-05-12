@@ -8,13 +8,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { MetersModule } from '../meters/meters.module';
 
+const passportModule = PassportModule.register({
+  defaultStrategy: 'jwt',
+  property: 'meter',
+});
+
 @Module({
   imports: [
     MetersModule,
-    PassportModule.register({
-      defaultStrategy: 'jwt',
-      property: 'meter',
-    }),
+    passportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -28,6 +30,6 @@ import { MetersModule } from '../meters/meters.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, AnonymousStrategy],
-  exports: [AuthService],
+  exports: [passportModule],
 })
 export class AuthModule {}

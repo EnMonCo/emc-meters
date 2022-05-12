@@ -1,11 +1,19 @@
 import { EntityHelper } from '../../utils/entity-helper';
-import { Column, CreateDateColumn, Entity, Index, ManyToOne } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { Meter } from '../../meters/entities/meter.entity';
 
 @Entity('short_term_data')
-@Index(['meter', 'timestamp'], { unique: true })
+// @Index(['meter', 'line', 'timestamp'], { unique: true })
 export class ShortTermData extends EntityHelper {
-  @ManyToOne(() => Meter, (meter) => meter.shortTermData, { primary: true })
+  @ManyToOne(() => Meter, (meter) => meter.shortTermData, {
+    primary: true,
+  })
   meter: Meter;
 
   @Column()
@@ -14,9 +22,9 @@ export class ShortTermData extends EntityHelper {
   @Column()
   power: number;
 
-  @Column()
+  @PrimaryColumn()
   line: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ primary: true })
   timestamp: Date;
 }

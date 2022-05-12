@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShortTermData } from './entities/short-term-data.entity';
 import { MetersModule } from '../meters/meters.module';
 import { Meter } from '../meters/entities/meter.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ShortTermData]),
     TypeOrmModule.forFeature([Meter]),
     MetersModule,
+    AuthModule,
   ],
   controllers: [DataController],
   providers: [DataService],

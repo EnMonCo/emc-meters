@@ -11,8 +11,8 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterDto } from './dto/auth-register.dto';
+import { AuthMeterGuard } from './auth-meter.guard';
 
 @ApiTags('Auth')
 @Controller({
@@ -36,7 +36,7 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Get('me')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthMeterGuard)
   @HttpCode(HttpStatus.OK)
   public async me(@Request() request) {
     return this.service.me(request.meter);

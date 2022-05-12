@@ -1,9 +1,14 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Meter } from '../../meters/entities/meter.entity';
+import { MetersService } from '../../meters/meters.service';
 
 type JwtPayload = Pick<Meter, 'id' | 'userId'> & { iat: number; exp: number };
 
@@ -12,6 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
+    private meterService: MetersService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -19,11 +25,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public validate(payload: JwtPayload) {
+  public async validate(payload: JwtPayload) {
     if (!payload.id) {
       throw new UnauthorizedException();
     }
 
-    return payload;
+    // TODO: id check
+
+    const meter = await this.meterService.findOne({ id: payload.id });
+
+    if (!meter) {
+      throw new NotFoundException('meter:notFound');
+    }
+
+    return meter;
   }
 }
