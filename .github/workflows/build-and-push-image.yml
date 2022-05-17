@@ -5,8 +5,8 @@ on:
     branches: [master]
 
 jobs:
-  push_to_registries:
-    name: Push Docker image to multiple registries
+  push_to_registry:
+    name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       packages: write
