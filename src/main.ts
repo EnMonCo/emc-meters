@@ -30,6 +30,7 @@ async function bootstrap() {
     .setTitle('Meters API')
     .setDescription('API docs for emc-meters')
     .setVersion('1.0')
+    .setBasePath(configService.get('app.swaggerBasePath'))
     .addBearerAuth()
     .build();
 
