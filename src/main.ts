@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import { SerializerInterceptor } from './utils/serializer.interceptor';
 import validationOptions from './utils/validation-options';
 import { Transport } from '@nestjs/microservices';
-import morgan from 'morgan';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
