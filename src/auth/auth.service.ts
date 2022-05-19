@@ -65,7 +65,7 @@ export class AuthService {
 
   async register(
     dto: AuthRegisterDto,
-  ): Promise<{ pairUrl: string; meter: Meter }> {
+  ): Promise<{ meter: Meter; pairUrl: string; token: string }> {
     const id = randomUUID();
     const hash = crypto
       .createHash('sha256')
@@ -87,7 +87,12 @@ export class AuthService {
       meter.hash
     }`;
 
-    return { pairUrl, meter: meter };
+    const token = this.jwtService.sign({
+      id: meter.id,
+      userId: meter.userId,
+    });
+
+    return { pairUrl, token, meter: meter };
   }
 
   async me(meter: Meter): Promise<Meter> {
