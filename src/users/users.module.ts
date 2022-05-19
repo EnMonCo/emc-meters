@@ -11,10 +11,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         name: 'EMC_ACCOUNTS',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.REDIS,
           options: {
-            host: configService.get<string>('app.EMC_ACCOUNTS_HOST'),
-            port: configService.get<number>('app.EMC_ACCOUNTS_PORT'),
+            url: configService.get<string>('app.workerHost'),
           },
         }),
         inject: [ConfigService],
