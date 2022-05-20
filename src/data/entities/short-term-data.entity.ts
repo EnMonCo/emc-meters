@@ -16,10 +16,10 @@ export class ShortTermData extends EntityHelper {
   })
   meter: Meter;
 
-  @Column()
+  @Column({ type: 'float' })
   voltage: number;
 
-  @Column()
+  @Column({ type: 'float' })
   power: number;
 
   @PrimaryColumn()

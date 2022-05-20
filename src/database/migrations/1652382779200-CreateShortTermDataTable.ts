@@ -9,8 +9,8 @@ export class CreateShortTermDataTable1652382779200
     await queryRunner.query(
       `CREATE TABLE "short_term_data"
        (
-           "voltage"   integer   NOT NULL,
-           "power"     integer   NOT NULL,
+           "voltage"   float     NOT NULL,
+           "power"     float     NOT NULL,
            "line"      integer   NOT NULL,
            "timestamp" TIMESTAMP NOT NULL DEFAULT now(),
            "meterId"   uuid      NOT NULL,
@@ -26,7 +26,8 @@ export class CreateShortTermDataTable1652382779200
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "short_term_data"
-          DROP CONSTRAINT "FK_242ecf08a33d24d290e65d64fae"`,
+      DROP
+      CONSTRAINT "FK_242ecf08a33d24d290e65d64fae"`,
     );
     await queryRunner.query(`DROP TABLE "short_term_data"`);
   }
