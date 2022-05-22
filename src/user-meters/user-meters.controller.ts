@@ -16,7 +16,6 @@ import {
 import { UserMetersService } from './user-meters.service';
 import { UpdateUserMeterDto } from './dto/update-user-meter.dto';
 import { MetersService } from '../meters/meters.service';
-import { infinityPagination } from '../utils/infinity-pagination';
 import { AuthUserGuard } from '../users/auth-user.guard';
 import { UserOwnsMeterGuard } from './user-owns-meter.guard';
 import { VerifyUserIdParamGuard } from './verify-user-id-param.guard';
@@ -47,13 +46,10 @@ export class UserMetersController {
       limit = 50;
     }
 
-    return infinityPagination(
-      await this.userMetersService.findManyWithPagination(userId, {
-        page,
-        limit,
-      }),
-      { page, limit },
-    );
+    return await this.userMetersService.findManyWithPagination(userId, {
+      page,
+      limit,
+    });
   }
 
   @Get(':id')

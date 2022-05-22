@@ -14,17 +14,18 @@ export class UserMetersService {
     private metersRepository: Repository<Meter>,
   ) {}
 
-  findManyWithPagination(
+  async findManyWithPagination(
     userId: number,
     paginationOptions: IPaginationOptions,
   ) {
-    return this.metersRepository.find({
+    const [data, totalCount] = await this.metersRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: {
         userId,
       },
     });
+    return { data, totalCount };
   }
 
   async pair(hash: string, userId: number) {
