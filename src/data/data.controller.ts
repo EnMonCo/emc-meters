@@ -17,7 +17,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { VerifyMeterIdParamGuard } from '../meters/verify-meter-id-param.guard';
 import { AuthUserGuard } from '../users/auth-user.guard';
 import { UserOwnsMeterGuard } from '../user-meters/user-owns-meter.guard';
-import { GetDataQueryDto } from './dto/get-data-query.dto';
 import { StatusEnum } from '../statuses/statuses.enum';
 import { ApiImplicitBody } from '@nestjs/swagger/dist/decorators/api-implicit-body.decorator';
 import { AuthMeterGuard } from '../auth/auth-meter.guard';
@@ -65,8 +64,15 @@ export class DataController {
   @HttpCode(HttpStatus.OK)
   async getData(
     @Param('meterId') meterId: string,
-    @Query() { from, to }: GetDataQueryDto,
+    @Query('from') from: number,
+    @Query('to') to: number,
   ) {
-    return this.dataService.getData(meterId, from, to);
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    if (fromDate > toDate) {
+      throw new BadRequestException('data:fromDateAfterToDate');
+    }
+
+    return this.dataService.getData(meterId, fromDate, toDate);
   }
 }

@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate } from 'class-validator';
 
 export class GetDataQueryDto {
   @ApiProperty()
-  @IsDate()
-  from: Date;
+  from: number;
 
   @ApiProperty()
-  @IsDate()
-  to: Date;
+  to: number;
 }
