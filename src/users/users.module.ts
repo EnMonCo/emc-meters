@@ -14,6 +14,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           transport: Transport.REDIS,
           options: {
             url: configService.get<string>('app.workerHost'),
+            retryAttempts: 10,
+            retryDelay: 3000,
           },
         }),
         inject: [ConfigService],
