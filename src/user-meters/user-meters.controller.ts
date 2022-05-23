@@ -52,36 +52,36 @@ export class UserMetersController {
     });
   }
 
-  @Get(':id')
+  @Get(':meterId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
   findOne(
-    @Param('id') id: string,
+    @Param('meterId') meterId: string,
     @Param('userId', ParseIntPipe) userId: number,
   ) {
-    return this.metersService.findOne({ id, userId });
+    return this.metersService.findOne({ id: meterId, userId });
   }
 
-  @Patch(':id')
+  @Patch(':meterId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
   update(
-    @Param('id') id: string,
+    @Param('meterId') meterId: string,
     @Param('userId', ParseIntPipe) userId: number,
     @Body() updateUserMeterDto: UpdateUserMeterDto,
   ) {
-    return this.metersService.update(id, updateUserMeterDto);
+    return this.metersService.update(meterId, updateUserMeterDto);
   }
 
-  @Delete(':id')
+  @Delete(':meterId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(UserOwnsMeterGuard)
   remove(
-    @Param('id') id: string,
+    @Param('meterId') meterId: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Param('userId', ParseIntPipe) userId: number,
   ) {
-    return this.metersService.softDelete(id);
+    return this.metersService.softDelete(meterId);
   }
 
   @Post(':hash/pair')
