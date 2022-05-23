@@ -31,4 +31,16 @@ export class DataService {
       },
     });
   }
+
+  getLiveData(meterId: string) {
+    return this.shortTermDataRepository.find({
+      where: {
+        meter: { id: meterId },
+      },
+      order: {
+        timestamp: 'DESC',
+      },
+      take: 1,
+    });
+  }
 }

@@ -75,4 +75,11 @@ export class DataController {
 
     return this.dataService.getData(meterId, fromDate, toDate);
   }
+
+  @Get('/live')
+  @UseGuards(AuthUserGuard, UserOwnsMeterGuard)
+  @HttpCode(HttpStatus.OK)
+  async getLiveData(@Param('meterId') meterId: string) {
+    return this.dataService.getLiveData(meterId);
+  }
 }
