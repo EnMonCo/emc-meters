@@ -18,7 +18,7 @@ export class UserMetersService {
     userId: number,
     paginationOptions: IPaginationOptions,
   ) {
-    const [data, totalCount] = await this.metersRepository.find({
+    const [data, totalCount] = await this.metersRepository.findAndCount({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: {
