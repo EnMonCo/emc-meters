@@ -16,7 +16,7 @@ import { CreateShortTermDataDto } from './dto/create-short-term-data.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { VerifyMeterIdParamGuard } from '../meters/verify-meter-id-param.guard';
 import { AuthUserGuard } from '../users/auth-user.guard';
-import { UserOwnsMeterGuard } from '../user-meters/user-owns-meter.guard';
+import { UserOwnsMeterOrAdminGuard } from '../user-meters/user-owns-meter-or-admin.guard';
 import { StatusEnum } from '../statuses/statuses.enum';
 import { ApiImplicitBody } from '@nestjs/swagger/dist/decorators/api-implicit-body.decorator';
 import { AuthMeterGuard } from '../auth/auth-meter.guard';
@@ -60,7 +60,7 @@ export class DataController {
   }
 
   @Get()
-  @UseGuards(AuthUserGuard, UserOwnsMeterGuard)
+  @UseGuards(AuthUserGuard, UserOwnsMeterOrAdminGuard)
   @HttpCode(HttpStatus.OK)
   async getData(
     @Param('meterId') meterId: string,
@@ -77,7 +77,7 @@ export class DataController {
   }
 
   @Get('/live')
-  @UseGuards(AuthUserGuard, UserOwnsMeterGuard)
+  @UseGuards(AuthUserGuard, UserOwnsMeterOrAdminGuard)
   @HttpCode(HttpStatus.OK)
   async getLiveData(@Param('meterId') meterId: string) {
     return this.dataService.getLiveData(meterId);

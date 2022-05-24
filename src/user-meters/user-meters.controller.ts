@@ -17,8 +17,8 @@ import { UserMetersService } from './user-meters.service';
 import { UpdateUserMeterDto } from './dto/update-user-meter.dto';
 import { MetersService } from '../meters/meters.service';
 import { AuthUserGuard } from '../users/auth-user.guard';
-import { UserOwnsMeterGuard } from './user-owns-meter.guard';
-import { VerifyUserIdParamGuard } from './verify-user-id-param.guard';
+import { UserOwnsMeterOrAdminGuard } from './user-owns-meter-or-admin.guard';
+import { VerifyUserIdParamOrAdminGuard } from './verify-user-id-param-or-admin.guard';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()
@@ -27,7 +27,7 @@ import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
   path: 'users/:userId/meters',
   version: '1',
 })
-@UseGuards(AuthUserGuard, VerifyUserIdParamGuard)
+@UseGuards(AuthUserGuard, VerifyUserIdParamOrAdminGuard)
 export class UserMetersController {
   constructor(
     private readonly userMetersService: UserMetersService,
@@ -54,7 +54,7 @@ export class UserMetersController {
 
   @Get(':meterId')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(UserOwnsMeterGuard)
+  @UseGuards(UserOwnsMeterOrAdminGuard)
   findOne(
     @Param('meterId') meterId: string,
     @Param('userId', ParseIntPipe) userId: number,
@@ -64,7 +64,7 @@ export class UserMetersController {
 
   @Patch(':meterId')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(UserOwnsMeterGuard)
+  @UseGuards(UserOwnsMeterOrAdminGuard)
   update(
     @Param('meterId') meterId: string,
     @Param('userId', ParseIntPipe) userId: number,
@@ -75,7 +75,7 @@ export class UserMetersController {
 
   @Delete(':meterId')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(UserOwnsMeterGuard)
+  @UseGuards(UserOwnsMeterOrAdminGuard)
   remove(
     @Param('meterId') meterId: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
