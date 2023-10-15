@@ -14,6 +14,7 @@ import {
 import { Status } from '../../statuses/entities/status.entity';
 import * as bcrypt from 'bcryptjs';
 import { ShortTermData } from '../../data/entities/short-term-data.entity';
+import { LongTermData } from '../../data/entities/long-term-data.entity';
 
 @Entity()
 export class Meter extends EntityHelper {
@@ -49,8 +50,15 @@ export class Meter extends EntityHelper {
   })
   status?: Status;
 
-  @OneToMany(() => ShortTermData, (data) => data.meter)
+  @OneToMany(() => ShortTermData, (data) => data.meter, {
+    onDelete: 'NO ACTION',
+  })
   shortTermData: ShortTermData[];
+
+  @OneToMany(() => LongTermData, (data) => data.meter, {
+    onDelete: 'NO ACTION',
+  })
+  longTermData: LongTermData[];
 
   @CreateDateColumn()
   createdAt: Date;

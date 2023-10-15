@@ -73,7 +73,7 @@ export class DataController {
       throw new BadRequestException('data:fromDateAfterToDate');
     }
 
-    return this.dataService.getData(meterId, fromDate, toDate);
+    return await this.dataService.getData(meterId, fromDate, toDate);
   }
 
   @Get('/live')

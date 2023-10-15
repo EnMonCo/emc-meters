@@ -10,4 +10,7 @@ export default registerAs('app', () => ({
   apiPrefix: process.env.API_PREFIX || 'api',
   fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
   workerHost: process.env.WORKER_HOST || 'redis://localhost:6379',
+  data: {
+    shortTermThreshold: parseInt(process.env.SHORT_TERM_THRESHOLD) || 1024,
+  },
 }));

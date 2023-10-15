@@ -13,6 +13,7 @@ import { Meter } from '../../meters/entities/meter.entity';
 export class ShortTermData extends EntityHelper {
   @ManyToOne(() => Meter, (meter) => meter.shortTermData, {
     primary: true,
+    onDelete: 'CASCADE',
   })
   meter: Meter;
 
