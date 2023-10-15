@@ -65,7 +65,7 @@ export class AuthService {
 
   async register(
     dto: AuthRegisterDto,
-  ): Promise<{ meter: Meter; pairUrl: string; token: string }> {
+  ): Promise<{ meter: { id: string }; pairUrl: string; token: string }> {
     const id = randomUUID();
     const hash = crypto
       .createHash('sha256')
@@ -92,7 +92,13 @@ export class AuthService {
       userId: meter.userId,
     });
 
-    return { pairUrl, token, meter: meter };
+    return {
+      pairUrl,
+      token,
+      meter: {
+        id: meter.id,
+      },
+    };
   }
 
   async me(meter: Meter): Promise<Meter> {
