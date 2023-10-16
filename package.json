@@ -45,6 +45,7 @@
     "@nestjs/swagger": "5.2.1",
     "@nestjs/typeorm": "8.0.3",
     "apple-signin-auth": "1.5.1",
+    "arima": "^0.2.5",
     "bcryptjs": "2.4.3",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",

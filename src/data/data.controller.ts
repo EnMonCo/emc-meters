@@ -82,4 +82,14 @@ export class DataController {
   async getLiveData(@Param('meterId') meterId: string) {
     return this.dataService.getLiveData(meterId);
   }
+
+  @Get('/predict')
+  @UseGuards(AuthUserGuard, UserOwnsMeterOrAdminGuard)
+  @HttpCode(HttpStatus.OK)
+  async getPrediction(
+    @Param('meterId') meterId: string,
+    @Query('count') count: number,
+  ) {
+    return await this.dataService.getPrediction(meterId, count);
+  }
 }

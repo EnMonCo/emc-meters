@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateShortTermDataDto } from './dto/create-short-term-data.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { Meter } from '../meters/entities/meter.entity';
 import { ConfigService } from '@nestjs/config';
 import { LongTermData } from './entities/long-term-data.entity';
 import { StatusEnum } from '../statuses/statuses.enum';
+import * as ARIMA from 'arima';
 
 @Injectable()
 export class DataService {
@@ -42,6 +43,7 @@ export class DataService {
     const longTermData = await this.longTermDataRepository.find({
       where: {
         meter: { id: meterId },
+        // TODO: OR dateTo
         dateFrom: Between(from, to),
       },
     });
@@ -55,7 +57,8 @@ export class DataService {
         line: d.line,
         timestamp: new Date(
           d.dateFrom.getTime() +
-            (d.dateTo.getTime() - d.dateFrom.getTime()) * (i / power.length),
+            (d.dateTo.getTime() - d.dateFrom.getTime()) *
+              (i / (power.length - 1)),
         ),
       }));
 
@@ -85,6 +88,56 @@ export class DataService {
       },
       take: 1,
     });
+  }
+
+  async getPrediction(meterId: string, count: number) {
+    const dbCount = await this.shortTermDataRepository.count({
+      where: {
+        meter: { id: meterId },
+      },
+      order: {
+        timestamp: 'DESC',
+      },
+    });
+
+    this.logger.debug(`Found ${dbCount} data points`);
+
+    if (dbCount < 20) {
+      throw new BadRequestException('data:notEnoughData');
+    }
+    if (dbCount > this.configService.get('app.data.shortTermThreshold')) {
+      throw new BadRequestException('data:tooMuchData');
+    }
+
+    const lastData = await this.shortTermDataRepository.find({
+      where: {
+        meter: { id: meterId },
+      },
+      order: {
+        timestamp: 'ASC',
+      },
+    });
+
+    const trainData = lastData.map((d) => d.power);
+    this.logger.debug(trainData);
+
+    const arima = new ARIMA({ auto: true });
+    arima.train(trainData);
+
+    const lastTimestamp = lastData[lastData.length - 1].timestamp;
+
+    const [prediction] = arima.predict(count);
+    return prediction.map((p, i) => ({
+      power: p,
+      voltage: lastData[lastData.length - 1].voltage,
+      line: lastData[lastData.length - 1].line,
+      timestamp: new Date(
+        lastTimestamp.getTime() +
+          (lastData[lastData.length - 2].timestamp.getTime() -
+            lastData[lastData.length - 3].timestamp.getTime()) *
+            i,
+      ),
+    }));
   }
 
   // @Cron('*5 * * * * *')
