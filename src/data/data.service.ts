@@ -46,6 +46,9 @@ export class DataService {
         // TODO: OR dateTo
         dateFrom: Between(from, to),
       },
+      order: {
+        dateFrom: 'ASC',
+      },
     });
     // restore long
     for (const d of longTermData) {
@@ -73,6 +76,9 @@ export class DataService {
         meter: { id: meterId },
         timestamp: Between(from, to),
       },
+      order: {
+        timestamp: 'ASC',
+      },
     });
     finalData.push(...shortTermData);
     return finalData;
@@ -84,7 +90,7 @@ export class DataService {
         meter: { id: meterId },
       },
       order: {
-        timestamp: 'DESC',
+        timestamp: 'ASC',
       },
       take: 1,
     });
@@ -96,7 +102,7 @@ export class DataService {
         meter: { id: meterId },
       },
       order: {
-        timestamp: 'DESC',
+        timestamp: 'ASC',
       },
     });
 
