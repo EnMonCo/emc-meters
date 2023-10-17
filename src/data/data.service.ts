@@ -90,7 +90,7 @@ export class DataService {
         meter: { id: meterId },
       },
       order: {
-        timestamp: 'ASC',
+        timestamp: 'DESC',
       },
       take: 1,
     });
